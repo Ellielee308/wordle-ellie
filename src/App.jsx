@@ -1,11 +1,10 @@
-import "./index.css";
+import Grid from "./grid/Grid.jsx";
+import React, { useReducer } from "react";
+import { wordleReducer, initialState } from "./reducer/wordleReducer.jsx";
 
 function App() {
-  return (
-    <>
-      <p className="text-pink-700">Hello</p>
-    </>
-  );
+  const [state, dispatch] = useReducer(wordleReducer, initialState);
+  return <Grid />;
 }
 
 export default App;
