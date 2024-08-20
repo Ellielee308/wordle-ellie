@@ -1,10 +1,33 @@
 import Grid from "./grid/Grid.jsx";
-import React, { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { wordleReducer, initialState } from "./reducer/wordleReducer.jsx";
 
-function App() {
+export default function App() {
   const [state, dispatch] = useReducer(wordleReducer, initialState);
-  return <Grid />;
-}
+  console.log(initialState);
 
-export default App;
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Backspace") {
+        dispatch({ type: "delete" });
+      } else if (/^[a-zA-Z]$/.test(event.key)) {
+        dispatch({ type: "enterLetter", payload: event.key.toUpperCase() });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  return (
+    <>
+      <h1 className="mt-3 text-center font-mono text-5xl font-bold tracking-widest">
+        wordle.
+      </h1>
+      <Grid guesses={state.guesses} />
+    </>
+  );
+}
