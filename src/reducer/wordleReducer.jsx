@@ -22,9 +22,13 @@ export const initialState = {
   ],
 };
 
+const ENTER_LETTER = "ENTER_LETTER";
+const DELETE_LETTER = "DELETE_LETTER";
+const SUBMIT_GUESS = "SUBMIT_GUESS";
+
 export function wordleReducer(state, action) {
   switch (action.type) {
-    case "enterLetter": {
+    case ENTER_LETTER: {
       //用戶輸入時即時記錄
       const newGuesses = JSON.parse(JSON.stringify(state.guesses));
       if (state.guesses[state.currentGuessIndex][4] === "")
@@ -43,7 +47,7 @@ export function wordleReducer(state, action) {
         currentGuessPosition: newGuessPosition,
       };
     }
-    case "delete": {
+    case DELETE_LETTER: {
       const newGuesses = JSON.parse(JSON.stringify(state.guesses));
       let newGuessPosition = state.currentGuessPosition;
       if (
@@ -69,7 +73,7 @@ export function wordleReducer(state, action) {
         currentGuessPosition: newGuessPosition,
       };
     }
-    case "submit": {
+    case SUBMIT_GUESS: {
       const newAttempt = state.attempt + 1;
       const gameOver =
         newAttempt >= 6 ||

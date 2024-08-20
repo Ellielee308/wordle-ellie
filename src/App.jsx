@@ -2,6 +2,10 @@ import Grid from "./grid/Grid.jsx";
 import { useEffect, useReducer } from "react";
 import { wordleReducer, initialState } from "./reducer/wordleReducer.jsx";
 
+const ENTER_LETTER = "ENTER_LETTER";
+const DELETE_LETTER = "DELETE_LETTER";
+const SUBMIT_GUESS = "SUBMIT_GUESS";
+
 export default function App() {
   const [state, dispatch] = useReducer(wordleReducer, initialState);
   console.log(initialState);
@@ -9,9 +13,9 @@ export default function App() {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
-        dispatch({ type: "delete" });
+        dispatch({ type: DELETE_LETTER });
       } else if (/^[a-zA-Z]$/.test(event.key)) {
-        dispatch({ type: "enterLetter", payload: event.key.toUpperCase() });
+        dispatch({ type: ENTER_LETTER, payload: event.key.toUpperCase() });
       }
     };
 
