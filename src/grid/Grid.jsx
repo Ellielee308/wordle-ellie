@@ -23,7 +23,7 @@ export default function Grid({ guesses, answer, currentGuessAttempt }) {
                   borderClass = "";
                 }
               } else if (letter !== "") {
-                bgColorClass = "border-gray-600";
+                borderClass = "border-2 border-solid border-gray-800";
                 textColorClass = ""; //不需要白色字體，清空
               }
 
