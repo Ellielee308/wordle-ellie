@@ -1,3 +1,9 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection } from "firebase/firestore";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
 export const initialState = {
   guesses: [
     ["", "", "", "", ""], // 第一次猜測
@@ -107,3 +113,20 @@ export function wordleReducer(state, action) {
       return state;
   }
 }
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_apiKEY,
+  authDomain: import.meta.env.VITE_FIREBASE_authDomain,
+  projectId: "wordle-ellie",
+  storageBucket: "wordle-ellie.appspot.com",
+  messagingSenderId: "218107262583",
+  appId: "1:218107262583:web:e915b99b8bcd00bbfe3872",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 獲取 'words' 集合的引用
+const wordsCollectionRef = collection(db, "words");
