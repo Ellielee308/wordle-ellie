@@ -1,24 +1,25 @@
 import Grid from "./grid/Grid.jsx";
 import { useEffect, useReducer } from "react";
-import { wordleReducer, initialState } from "./reducer/wordleReducer.jsx";
-
-const ENTER_LETTER = "ENTER_LETTER";
-const DELETE_LETTER = "DELETE_LETTER";
-const SUBMIT_GUESS = "SUBMIT_GUESS";
-const RESET_GAME = "RESET_GAME";
+import {
+  ActionTypes,
+  wordleReducer,
+  initialState,
+} from "./reducer/wordleReducer.jsx";
 
 export default function App() {
   const [state, dispatch] = useReducer(wordleReducer, initialState);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (state.gameOver === true) return;
       if (event.key === "Backspace") {
-        dispatch({ type: DELETE_LETTER });
+        dispatch({ type: ActionTypes.DELETE_LETTER });
       } else if (/^[a-zA-Z]$/.test(event.key)) {
-        dispatch({ type: ENTER_LETTER, payload: event.key.toUpperCase() });
+        dispatch({
+          type: ActionTypes.ENTER_LETTER,
+          payload: event.key.toUpperCase(),
+        });
       } else if (event.key === "Enter") {
-        dispatch({ type: SUBMIT_GUESS });
+        dispatch({ type: ActionTypes.SUBMIT_GUESS });
       }
     };
 
@@ -27,7 +28,7 @@ export default function App() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [state.gameOver]);
+  }, []);
 
   return (
     <>
@@ -59,7 +60,7 @@ export default function App() {
           className={
             "mx-auto flex h-6 w-16 items-center justify-center rounded bg-green-600 text-center font-mono text-sm tracking-widest text-white hover:cursor-pointer"
           }
-          onClick={() => dispatch({ type: RESET_GAME })}
+          onClick={() => dispatch({ type: ActionTypes.RESET_GAME })}
         >
           RESET
         </div>
