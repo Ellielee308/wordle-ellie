@@ -15,7 +15,6 @@ export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 export async function getRandomWord(db) {
-  // 獲取 'words' 集合的引用
   const wordsCollectionRef = collection(db, "words");
 
   // 取得所有資料
@@ -25,7 +24,6 @@ export async function getRandomWord(db) {
   // random index
   const randomIndex = Math.floor(Math.random() * totalWordsNumber);
 
-  // 找到這個索引對應的answer
   const randomAnswerSnapshot = allWordsSnapshot.docs[randomIndex];
 
   const randomAnswer = randomAnswerSnapshot.data().answer.toUpperCase();
@@ -77,19 +75,22 @@ export function wordleReducer(state, action) {
           action.payload;
       let newGuessPosition;
       // console.log(newGuesses);
-      if (state.currentGuessPosition <= 3) {
+      if (state.currentGuessPosition <= LAST_POSITION - 1) {
         newGuessPosition = state.currentGuessPosition + 1;
-      } else {
-        newGuessPosition = LAST_POSITION;
       }
+      // } else {
+      //   newGuessPosition = LAST_POSITION;
+      // }
       return {
         ...state,
         guesses: newGuesses,
         currentGuessPosition: newGuessPosition,
       };
+
+      //修修
     }
     case ActionTypes.DELETE_LETTER: {
-      if (state.gameOver === true) return state;
+      if (state.gameOver) return state;
       const newGuesses = JSON.parse(JSON.stringify(state.guesses));
       let newGuessPosition = state.currentGuessPosition;
       if (
@@ -118,7 +119,7 @@ export function wordleReducer(state, action) {
       };
     }
     case ActionTypes.SUBMIT_GUESS: {
-      if (state.gameOver === true) return state;
+      if (state.gameOver) return state;
       const gameOver =
         (state.currentGuessAttempt === TOTAL_CHANCE &&
           state.guesses[state.currentGuessAttempt][LAST_POSITION] !== "") ||
@@ -129,12 +130,8 @@ export function wordleReducer(state, action) {
         newcurrentGuessAttempt += 1;
         newCurrentGuessPosition = 0;
       }
-      let hasWon;
-      if (state.guesses[state.currentGuessAttempt].join("") === state.answer) {
-        hasWon = true;
-      }
-      console.log(state.answer);
-      console.log(gameOver);
+      let hasWon =
+        state.guesses[state.currentGuessAttempt].join("") === state.answer;
       return {
         ...state,
         currentGuessAttempt: newcurrentGuessAttempt,
@@ -150,3 +147,5 @@ export function wordleReducer(state, action) {
       return state;
   }
 }
+
+//   if (state.gameOver) return state;能不能只寫一次

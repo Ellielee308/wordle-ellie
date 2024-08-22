@@ -10,16 +10,19 @@ import {
 
 export default function App() {
   const [state, dispatch] = useReducer(wordleReducer, initialState);
-  let ignore = false;
+
   useEffect(() => {
+    let ignore = false;
     const initializeGame = async () => {
       const answer = await getRandomWord(db);
       dispatch({ type: ActionTypes.SET_ANSWER, payload: answer });
     };
     if (!ignore) {
       initializeGame();
-      ignore = true;
     }
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   useEffect(() => {
