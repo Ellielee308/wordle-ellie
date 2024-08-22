@@ -4,10 +4,23 @@ import {
   ActionTypes,
   wordleReducer,
   initialState,
+  db,
+  getRandomWord,
 } from "./reducer/wordleReducer.jsx";
 
 export default function App() {
   const [state, dispatch] = useReducer(wordleReducer, initialState);
+  let ignore = false;
+  useEffect(() => {
+    const initializeGame = async () => {
+      const answer = await getRandomWord(db);
+      dispatch({ type: ActionTypes.SET_ANSWER, payload: answer });
+    };
+    if (!ignore) {
+      initializeGame();
+      ignore = true;
+    }
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -29,6 +42,12 @@ export default function App() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  const handleResetGame = async () => {
+    const newAnswer = await getRandomWord(db);
+    dispatch({ type: ActionTypes.RESET_GAME });
+    dispatch({ type: ActionTypes.SET_ANSWER, payload: newAnswer });
+  };
 
   return (
     <>
@@ -60,7 +79,7 @@ export default function App() {
           className={
             "mx-auto flex h-6 w-16 items-center justify-center rounded bg-green-600 text-center font-mono text-sm tracking-widest text-white hover:cursor-pointer"
           }
-          onClick={() => dispatch({ type: ActionTypes.RESET_GAME })}
+          onClick={handleResetGame}
         >
           RESET
         </div>

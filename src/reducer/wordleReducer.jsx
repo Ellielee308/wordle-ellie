@@ -1,8 +1,37 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_apiKEY,
+  authDomain: import.meta.env.VITE_FIREBASE_authDomain,
+  projectId: "wordle-ellie",
+  storageBucket: "wordle-ellie.appspot.com",
+  messagingSenderId: "218107262583",
+  appId: "1:218107262583:web:e915b99b8bcd00bbfe3872",
+};
+
+// Initialize Firebase
+export const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
+
+export async function getRandomWord(db) {
+  // 獲取 'words' 集合的引用
+  const wordsCollectionRef = collection(db, "words");
+
+  // 取得所有資料
+  const allWordsSnapshot = await getDocs(wordsCollectionRef);
+  const totalWordsNumber = allWordsSnapshot.size;
+
+  // random index
+  const randomIndex = Math.floor(Math.random() * totalWordsNumber);
+
+  // 找到這個索引對應的answer
+  const randomAnswerSnapshot = allWordsSnapshot.docs[randomIndex];
+
+  const randomAnswer = randomAnswerSnapshot.data().answer.toUpperCase();
+  console.log("The answer:", randomAnswer);
+  return randomAnswer;
+}
 
 export const initialState = {
   guesses: [
@@ -15,12 +44,13 @@ export const initialState = {
   ],
   currentGuessAttempt: 0,
   currentGuessPosition: 0,
-  answer: "DITTO",
+  answer: "",
   gameOver: false,
   hasWon: false,
 };
 
 export const ActionTypes = {
+  SET_ANSWER: "SET_ANSWER",
   ENTER_LETTER: "ENTER_LETTER",
   DELETE_LETTER: "DELETE_LETTER",
   SUBMIT_GUESS: "SUBMIT_GUESS",
@@ -32,6 +62,12 @@ const TOTAL_CHANCE = 5;
 
 export function wordleReducer(state, action) {
   switch (action.type) {
+    case ActionTypes.SET_ANSWER: {
+      return {
+        ...state,
+        answer: action.payload,
+      };
+    }
     case ActionTypes.ENTER_LETTER: {
       //用戶輸入時即時記錄
       if (state.gameOver === true) return state;
@@ -40,7 +76,7 @@ export function wordleReducer(state, action) {
         newGuesses[state.currentGuessAttempt][state.currentGuessPosition] =
           action.payload;
       let newGuessPosition;
-      console.log(newGuesses);
+      // console.log(newGuesses);
       if (state.currentGuessPosition <= 3) {
         newGuessPosition = state.currentGuessPosition + 1;
       } else {
@@ -97,6 +133,7 @@ export function wordleReducer(state, action) {
       if (state.guesses[state.currentGuessAttempt].join("") === state.answer) {
         hasWon = true;
       }
+      console.log(state.answer);
       console.log(gameOver);
       return {
         ...state,
@@ -113,20 +150,3 @@ export function wordleReducer(state, action) {
       return state;
   }
 }
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_apiKEY,
-  authDomain: import.meta.env.VITE_FIREBASE_authDomain,
-  projectId: "wordle-ellie",
-  storageBucket: "wordle-ellie.appspot.com",
-  messagingSenderId: "218107262583",
-  appId: "1:218107262583:web:e915b99b8bcd00bbfe3872",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// 獲取 'words' 集合的引用
-const wordsCollectionRef = collection(db, "words");
